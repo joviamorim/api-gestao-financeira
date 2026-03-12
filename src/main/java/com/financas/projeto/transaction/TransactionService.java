@@ -1,6 +1,7 @@
 package com.financas.projeto.transaction;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.financas.projeto.category.Category;
 import com.financas.projeto.category.CategoryService;
@@ -20,8 +21,8 @@ public class TransactionService {
         this.categoryService = categoryService;
     }
 
-    public List<Transaction> getAllTransactionsByUserEmail(String userEmail) {
-        List<Transaction> transactions = transactionRepository.findAllByUserEmail(userEmail);
+    public Page<Transaction> getAllTransactionsByUserEmail(String userEmail, Pageable pageable) {
+        Page<Transaction> transactions = transactionRepository.findAllByUserEmail(userEmail, pageable);
         return transactions;
     }
 

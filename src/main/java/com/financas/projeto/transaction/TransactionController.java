@@ -1,6 +1,10 @@
 package com.financas.projeto.transaction;
 
-import java.util.List;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,21 +30,20 @@ public class TransactionController {
     }
 
     @GetMapping
-    public List<TransactionResponse> getAllTransactionsByUserEmail(
-        @AuthenticationPrincipal User user
+    public Page<TransactionResponse> getAllTransactionsByUserEmail(
+        @AuthenticationPrincipal User user,
+        @ParameterObject @PageableDefault(size = 10, sort = "date", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        List<Transaction> transactions = transactionService.getAllTransactionsByUserEmail(user.getEmail());
+        Page<Transaction> transactions = transactionService.getAllTransactionsByUserEmail(user.getEmail(), pageable);
 
-        return transactions.stream()
-            .map(transaction -> new TransactionResponse(
+        return transactions.map(transaction -> new TransactionResponse(
                 transaction.getId(),
                 transaction.getType(),
                 transaction.getAmount(),
                 transaction.getDescription(),
                 transaction.getDate(),
                 transaction.getCategory().getName()
-            ))
-            .toList();
+            ));
     }
 
     @PostMapping("/create")
