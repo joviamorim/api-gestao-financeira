@@ -1,5 +1,8 @@
 package com.financas.projeto.transaction;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.financas.projeto.transaction.dto.DeleteTransactionRequest;
 import com.financas.projeto.transaction.dto.RegisterTransactionRequest;
@@ -30,11 +34,83 @@ public class TransactionController {
     }
 
     @GetMapping
-    public Page<TransactionResponse> getAllTransactionsByUserEmail(
+    public Page<TransactionResponse> getAllTransactionsByUserId(
         @AuthenticationPrincipal User user,
         @ParameterObject @PageableDefault(size = 10, sort = "date", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Page<Transaction> transactions = transactionService.getAllTransactionsByUserEmail(user.getEmail(), pageable);
+        Page<Transaction> transactions = transactionService.getAllTransactionsByUserId(user.getId(), pageable);
+
+        return transactions.map(transaction -> new TransactionResponse(
+                transaction.getId(),
+                transaction.getType(),
+                transaction.getAmount(),
+                transaction.getDescription(),
+                transaction.getDate(),
+                transaction.getCategory().getName()
+            ));
+    }
+
+    @GetMapping("/filter-by-month")
+    public Page<TransactionResponse> getTransactionsByUserIdAndMonth(
+        @AuthenticationPrincipal User user,
+        @RequestParam YearMonth month,
+        @ParameterObject @PageableDefault(size = 10, sort = "date", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        LocalDate startDate = month.atDay(1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        Page<Transaction> transactions = transactionService.getTransactionsByUserIdAndDateBetween(
+            user.getId(),
+            startDate,
+            endDate,
+            pageable
+        );
+
+        return transactions.map(transaction -> new TransactionResponse(
+                transaction.getId(),
+                transaction.getType(),
+                transaction.getAmount(),
+                transaction.getDescription(),
+                transaction.getDate(),
+                transaction.getCategory().getName()
+            ));
+    }
+
+    @GetMapping("/filter-by-date-range")
+    public Page<TransactionResponse> getTransactionsByUserIdAndDateBetween(
+        @AuthenticationPrincipal User user,
+        @RequestParam LocalDate startDate,
+        @RequestParam LocalDate endDate,
+        @ParameterObject @PageableDefault(size = 10, sort = "date", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        Page<Transaction> transactions = transactionService.getTransactionsByUserIdAndDateBetween(
+            user.getId(),
+            startDate,
+            endDate,
+            pageable
+        );
+
+        return transactions.map(transaction -> new TransactionResponse(
+                transaction.getId(),
+                transaction.getType(),
+                transaction.getAmount(),
+                transaction.getDescription(),
+                transaction.getDate(),
+                transaction.getCategory().getName()
+            ));
+    }
+
+    @GetMapping("/filter-by-category")
+    public Page<TransactionResponse> getTransactionsByUserIdAndCategoryId(
+        @AuthenticationPrincipal User user,
+        @RequestParam UUID categoryId,
+        @ParameterObject @PageableDefault(size = 10, sort = "date", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        Page<Transaction> transactions = transactionService.getTransactionsByUserIdAndCategory(
+            user.getId(),
+            categoryId,
+            pageable
+        );
 
         return transactions.map(transaction -> new TransactionResponse(
                 transaction.getId(),
