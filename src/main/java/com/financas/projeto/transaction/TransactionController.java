@@ -22,6 +22,7 @@ import com.financas.projeto.transaction.dto.RegisterTransactionRequest;
 import com.financas.projeto.transaction.dto.TransactionResponse;
 import com.financas.projeto.transaction.dto.UpdateTransactionRequest;
 import com.financas.projeto.user.User;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/transactions")
@@ -125,7 +126,7 @@ public class TransactionController {
     @PostMapping("/create")
     public TransactionResponse createTransaction(
         @AuthenticationPrincipal User user,
-        @RequestBody RegisterTransactionRequest request
+        @RequestBody @Valid RegisterTransactionRequest request
     ) {
         Transaction transaction = transactionService.createTransaction(request, user);
 
@@ -142,7 +143,7 @@ public class TransactionController {
     @PutMapping("/update")
     public TransactionResponse updateTransaction(
         @AuthenticationPrincipal User user,
-        @RequestBody UpdateTransactionRequest request
+        @RequestBody @Valid UpdateTransactionRequest request
     ) {
         Transaction transaction = transactionService.updateTransaction(request, user);
 
@@ -159,7 +160,7 @@ public class TransactionController {
     @DeleteMapping("/delete")
     public TransactionResponse deleteTransaction(
         @AuthenticationPrincipal User user,
-        @RequestBody DeleteTransactionRequest request
+        @RequestBody @Valid DeleteTransactionRequest request
     ) {
         Transaction transaction = transactionService.deleteTransaction(request, user);
         
