@@ -43,4 +43,22 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     AND t.date <= :endDate
     """)
     BigDecimal getBalanceByDateRange(UUID userId, LocalDate startDate, LocalDate endDate);
+
+    Page<Transaction> findByUserIdAndType(
+        UUID userId,
+        TransactionType type,
+        Pageable pageable
+    );
+
+    @Query("""
+    SELECT
+        COALESCE(SUM(t.amount), 0) AS totalValue
+    FROM Transaction t
+    WHERE t.user.id = :userId
+    AND t.type = :type
+    """)
+    BigDecimal getTotalValueByUserIdAndType(
+        UUID userId,
+        TransactionType type
+    );
 }

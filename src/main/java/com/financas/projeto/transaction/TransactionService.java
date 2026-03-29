@@ -64,6 +64,24 @@ public class TransactionService {
         return transactions;
     }
 
+    public Page<Transaction> getTransactionsByUserIdAndType(
+        UUID userId,
+        TransactionType type,
+        Pageable pageable
+    ) {
+        Page<Transaction> transactions = transactionRepository.findByUserIdAndType(
+            userId,
+            type,
+            pageable
+        );
+
+        return transactions;
+    }
+    
+    public BigDecimal getTotalValueByUserIdAndType(UUID userId, TransactionType type) {
+        return transactionRepository.getTotalValueByUserIdAndType(userId, type);
+    }
+
     public BigDecimal getBalance(UUID userId) {
         return transactionRepository.getBalance(userId);
     }

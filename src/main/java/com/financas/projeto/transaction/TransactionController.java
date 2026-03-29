@@ -1,5 +1,6 @@
 package com.financas.projeto.transaction;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.UUID;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.financas.projeto.transaction.dto.DeleteTransactionRequest;
 import com.financas.projeto.transaction.dto.RegisterTransactionRequest;
 import com.financas.projeto.transaction.dto.TransactionResponse;
+import com.financas.projeto.transaction.dto.TransactionValueByTypeResponse;
 import com.financas.projeto.transaction.dto.UpdateTransactionRequest;
 import com.financas.projeto.user.User;
 import jakarta.validation.Valid;
@@ -121,6 +123,37 @@ public class TransactionController {
                 transaction.getDate(),
                 transaction.getCategory().getName()
             ));
+    }
+
+    @GetMapping("/filter-by-type")
+    public Page<TransactionResponse> getTransactionsByUserIdAndType(
+        @AuthenticationPrincipal User user,
+        @RequestParam TransactionType type,
+        @ParameterObject @PageableDefault(size = 10, sort = "date", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        Page<Transaction> transactions = transactionService.getTransactionsByUserIdAndType(
+            user.getId(),
+            type,
+            pageable
+        );
+
+        return transactions.map(transaction -> new TransactionResponse(
+                transaction.getId(),
+                transaction.getType(),
+                transaction.getAmount(),
+                transaction.getDescription(),
+                transaction.getDate(),
+                transaction.getCategory().getName()
+            ));
+    }
+
+    @GetMapping("/total-value-by-type")
+    public TransactionValueByTypeResponse getTotalValueByType(
+        @AuthenticationPrincipal User user,
+        @RequestParam TransactionType type
+    ) {
+        BigDecimal totalValue = transactionService.getTotalValueByUserIdAndType(user.getId(), type);
+        return new TransactionValueByTypeResponse(totalValue);
     }
 
     @PostMapping("/create")
