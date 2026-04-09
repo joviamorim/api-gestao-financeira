@@ -1,10 +1,11 @@
-package com.financas.projeto.balance;
+package com.financas.projeto.balance.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
-import com.financas.projeto.transaction.TransactionService;
+
+import com.financas.projeto.transaction.service.TransactionService;
 
 @Service
 public class BalanceService {
@@ -14,7 +15,7 @@ public class BalanceService {
     public BalanceService(TransactionService transactionService) {
         this.transactionService = transactionService;
     }
-    
+
     public BigDecimal getBalance(UUID userId) {
         return transactionService.getBalance(userId);
     }

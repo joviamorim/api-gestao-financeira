@@ -1,11 +1,13 @@
-package com.financas.projeto.transaction;
+package com.financas.projeto.transaction.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import com.financas.projeto.category.Category;
-import com.financas.projeto.user.User;
+
+import com.financas.projeto.category.entity.Category;
+import com.financas.projeto.user.entity.User;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -55,7 +57,7 @@ public class Transaction {
         this.createdAt = LocalDateTime.now();
     }
 
-    protected Transaction() {
+    public Transaction() {
     }
 
     public UUID getId() {

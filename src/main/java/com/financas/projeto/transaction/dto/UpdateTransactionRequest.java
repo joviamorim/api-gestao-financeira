@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import com.financas.projeto.transaction.TransactionType;
+import com.financas.projeto.transaction.entity.TransactionType;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,24 +12,15 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record UpdateTransactionRequest(
-    @NotNull
-    UUID id,
+        @NotNull UUID id,
 
-    @NotNull
-    TransactionType type,
+        @NotNull TransactionType type,
 
-    @NotNull
-    @Positive
-    BigDecimal amount,
+        @NotNull @Positive BigDecimal amount,
 
-    @NotBlank
-    @Size(max = 255)
-    String description,
+        @NotBlank @Size(max = 255) String description,
 
-    @NotNull
-    LocalDate date,
+        @NotNull LocalDate date,
 
-    @NotNull
-    UUID categoryId
-) {
+        @NotNull UUID categoryId) {
 }

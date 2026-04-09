@@ -1,4 +1,4 @@
-package com.financas.projeto.user;
+package com.financas.projeto.user.entity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -28,13 +28,13 @@ public class User {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
-    
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
 
-    protected User() {
+    public User() {
     }
 
     public UUID getId() {

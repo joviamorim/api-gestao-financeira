@@ -1,4 +1,4 @@
-package com.financas.projeto.auth;
+package com.financas.projeto.auth.service;
 
 import java.security.Key;
 import java.util.Date;
@@ -7,7 +7,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.financas.projeto.user.User;
+
+import com.financas.projeto.user.entity.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -26,14 +27,14 @@ public class JwtService {
         claims.put("email", user.getEmail());
 
         Key key = Keys.hmacShaKeyFor(secret.getBytes());
-        
+
         return Jwts.builder()
-            .setSubject(user.getEmail())
-            .setClaims(claims)
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
-            .signWith(key, SignatureAlgorithm.HS256)
-            .compact();
+                .setSubject(user.getEmail())
+                .setClaims(claims)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
     }
 
     public String extractEmailFromAuthHeader(String authHeader) {
@@ -51,10 +52,10 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(getSignKey())
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private Key getSignKey() {

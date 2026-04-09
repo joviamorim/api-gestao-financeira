@@ -1,4 +1,4 @@
-package com.financas.projeto.category;
+package com.financas.projeto.category.entity;
 
 import java.util.UUID;
 import jakarta.persistence.Column;
