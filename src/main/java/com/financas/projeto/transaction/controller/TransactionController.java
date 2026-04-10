@@ -47,15 +47,10 @@ public class TransactionController {
         public ResponseEntity<ApiResponse<Page<TransactionResponse>>> getAllTransactionsByUserId(
                         @AuthenticationPrincipal User user,
                         @ParameterObject @PageableDefault(size = 10, sort = "date", direction = Sort.Direction.DESC) Pageable pageable) {
-                Page<Transaction> transactions = transactionService.getAllTransactionsByUserId(user.getId(), pageable);
+                Page<TransactionResponse> transactions = transactionService.getAllTransactionsByUserId(user.getId(),
+                                pageable);
 
-                return ResponseEntity.ok(ApiResponse.success(transactions.map(transaction -> new TransactionResponse(
-                                transaction.getId(),
-                                transaction.getType(),
-                                transaction.getAmount(),
-                                transaction.getDescription(),
-                                transaction.getDate(),
-                                transaction.getCategory().getName()))));
+                return ResponseEntity.ok(ApiResponse.success(transactions));
         }
 
         @GetMapping("/filter-by-month")
@@ -66,19 +61,13 @@ public class TransactionController {
                 LocalDate startDate = month.atDay(1);
                 LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
-                Page<Transaction> transactions = transactionService.getTransactionsByUserIdAndDateBetween(
+                Page<TransactionResponse> transactions = transactionService.getTransactionsByUserIdAndDateBetween(
                                 user.getId(),
                                 startDate,
                                 endDate,
                                 pageable);
 
-                return ResponseEntity.ok(ApiResponse.success(transactions.map(transaction -> new TransactionResponse(
-                                transaction.getId(),
-                                transaction.getType(),
-                                transaction.getAmount(),
-                                transaction.getDescription(),
-                                transaction.getDate(),
-                                transaction.getCategory().getName()))));
+                return ResponseEntity.ok(ApiResponse.success(transactions));
         }
 
         @GetMapping("/filter-by-date-range")
@@ -87,19 +76,13 @@ public class TransactionController {
                         @RequestParam LocalDate startDate,
                         @RequestParam LocalDate endDate,
                         @ParameterObject @PageableDefault(size = 10, sort = "date", direction = Sort.Direction.DESC) Pageable pageable) {
-                Page<Transaction> transactions = transactionService.getTransactionsByUserIdAndDateBetween(
+                Page<TransactionResponse> transactions = transactionService.getTransactionsByUserIdAndDateBetween(
                                 user.getId(),
                                 startDate,
                                 endDate,
                                 pageable);
 
-                return ResponseEntity.ok(ApiResponse.success(transactions.map(transaction -> new TransactionResponse(
-                                transaction.getId(),
-                                transaction.getType(),
-                                transaction.getAmount(),
-                                transaction.getDescription(),
-                                transaction.getDate(),
-                                transaction.getCategory().getName()))));
+                return ResponseEntity.ok(ApiResponse.success(transactions));
         }
 
         @GetMapping("/filter-by-category")
@@ -107,18 +90,12 @@ public class TransactionController {
                         @AuthenticationPrincipal User user,
                         @RequestParam UUID categoryId,
                         @ParameterObject @PageableDefault(size = 10, sort = "date", direction = Sort.Direction.DESC) Pageable pageable) {
-                Page<Transaction> transactions = transactionService.getTransactionsByUserIdAndCategory(
+                Page<TransactionResponse> transactions = transactionService.getTransactionsByUserIdAndCategory(
                                 user.getId(),
                                 categoryId,
                                 pageable);
 
-                return ResponseEntity.ok(ApiResponse.success(transactions.map(transaction -> new TransactionResponse(
-                                transaction.getId(),
-                                transaction.getType(),
-                                transaction.getAmount(),
-                                transaction.getDescription(),
-                                transaction.getDate(),
-                                transaction.getCategory().getName()))));
+                return ResponseEntity.ok(ApiResponse.success(transactions));
         }
 
         @GetMapping("/filter-by-type")
@@ -126,75 +103,47 @@ public class TransactionController {
                         @AuthenticationPrincipal User user,
                         @RequestParam TransactionType type,
                         @ParameterObject @PageableDefault(size = 10, sort = "date", direction = Sort.Direction.DESC) Pageable pageable) {
-                Page<Transaction> transactions = transactionService.getTransactionsByUserIdAndType(
+                Page<TransactionResponse> transactions = transactionService.getTransactionsByUserIdAndType(
                                 user.getId(),
                                 type,
                                 pageable);
 
-                return ResponseEntity.ok(ApiResponse.success(transactions.map(transaction -> new TransactionResponse(
-                                transaction.getId(),
-                                transaction.getType(),
-                                transaction.getAmount(),
-                                transaction.getDescription(),
-                                transaction.getDate(),
-                                transaction.getCategory().getName()))));
+                return ResponseEntity.ok(ApiResponse.success(transactions));
         }
 
         @GetMapping("/total-value-by-type")
         public ResponseEntity<ApiResponse<TransactionValueByTypeResponse>> getTotalValueByType(
                         @AuthenticationPrincipal User user,
                         @RequestParam TransactionType type) {
-                BigDecimal totalValue = transactionService.getTotalValueByUserIdAndType(user.getId(), type);
-                return ResponseEntity.ok(
-                                ApiResponse.success(new TransactionValueByTypeResponse(totalValue)));
+                TransactionValueByTypeResponse totalValue = transactionService
+                                .getTotalValueByUserIdAndType(user.getId(), type);
+                return ResponseEntity.ok(ApiResponse.success(totalValue, "Total value retrieved successfully"));
         }
 
         @PostMapping("/create")
         public ResponseEntity<ApiResponse<TransactionResponse>> createTransaction(
                         @AuthenticationPrincipal User user,
                         @RequestBody @Valid RegisterTransactionRequest request) {
-                Transaction transaction = transactionService.createTransaction(request, user);
+                TransactionResponse transaction = transactionService.createTransaction(request, user);
 
-                return ResponseEntity.ok(
-                                ApiResponse.success(new TransactionResponse(
-                                                transaction.getId(),
-                                                transaction.getType(),
-                                                transaction.getAmount(),
-                                                transaction.getDescription(),
-                                                transaction.getDate(),
-                                                transaction.getCategory().getName())));
+                return ResponseEntity.ok(ApiResponse.success(transaction, "Transaction created successfully"));
         }
 
         @PutMapping("/update")
         public ResponseEntity<ApiResponse<TransactionResponse>> updateTransaction(
                         @AuthenticationPrincipal User user,
                         @RequestBody @Valid UpdateTransactionRequest request) {
-                Transaction transaction = transactionService.updateTransaction(request, user);
+                TransactionResponse transaction = transactionService.updateTransaction(request, user);
 
-                return ResponseEntity.ok(
-                                ApiResponse.success(new TransactionResponse(
-                                                transaction.getId(),
-                                                transaction.getType(),
-                                                transaction.getAmount(),
-                                                transaction.getDescription(),
-                                                transaction.getDate(),
-                                                transaction.getCategory().getName())));
+                return ResponseEntity.ok(ApiResponse.success(transaction, "Transaction updated successfully"));
         }
 
         @DeleteMapping("/delete")
         public ResponseEntity<ApiResponse<TransactionResponse>> deleteTransaction(
                         @AuthenticationPrincipal User user,
                         @RequestBody @Valid DeleteTransactionRequest request) {
-                Transaction transaction = transactionService.deleteTransaction(request, user);
+                TransactionResponse transaction = transactionService.deleteTransaction(request, user);
 
-                return ResponseEntity.ok(
-                                ApiResponse.success(new TransactionResponse(
-                                                transaction.getId(),
-                                                transaction.getType(),
-                                                transaction.getAmount(),
-                                                transaction.getDescription(),
-                                                transaction.getDate(),
-                                                transaction.getCategory().getName()),
-                                                "Transaction deleted successfully"));
+                return ResponseEntity.ok(ApiResponse.success(transaction, "Transaction deleted successfully"));
         }
 }

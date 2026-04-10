@@ -28,9 +28,9 @@ public class BalanceController {
     @GetMapping
     public ResponseEntity<ApiResponse<BalanceResponse>> getBalance(
             @AuthenticationPrincipal User user) {
-        BigDecimal balance = balanceService.getBalance(user.getId());
+        BalanceResponse balance = balanceService.getBalance(user.getId());
 
-        return ResponseEntity.ok(ApiResponse.success(new BalanceResponse(balance)));
+        return ResponseEntity.ok(ApiResponse.success(balance));
     }
 
     @GetMapping("filter-by-month")
@@ -40,8 +40,8 @@ public class BalanceController {
         LocalDate startDate = month.atDay(1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
-        BigDecimal balance = balanceService.getBalanceByDateRange(user.getId(), startDate, endDate);
+        BalanceResponse balance = balanceService.getBalanceByDateRange(user.getId(), startDate, endDate);
 
-        return ResponseEntity.ok(ApiResponse.success(new BalanceResponse(balance)));
+        return ResponseEntity.ok(ApiResponse.success(balance));
     }
 }

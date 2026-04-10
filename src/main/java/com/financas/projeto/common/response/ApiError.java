@@ -4,23 +4,23 @@ import java.time.LocalDateTime;
 
 public class ApiError {
     private boolean success;
-    private String error;
+    private String message;
     private int status;
     private LocalDateTime timestamp;
 
-    public ApiError(String error, int status) {
+    public ApiError(String message, int status) {
         this.success = false;
-        this.error = error;
+        this.message = message;
         this.status = status;
         this.timestamp = LocalDateTime.now();
     }
 
-    public boolean getSuccess() {
+    public boolean isSuccess() {
         return success;
     }
 
-    public String getError() {
-        return error;
+    public String getMessage() {
+        return message;
     }
 
     public int getStatus() {

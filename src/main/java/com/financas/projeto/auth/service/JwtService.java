@@ -8,6 +8,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.financas.projeto.auth.exception.InvalidAuthorizationHeaderException;
+import com.financas.projeto.auth.exception.InvalidJwtTokenException;
 import com.financas.projeto.user.entity.User;
 
 import io.jsonwebtoken.Claims;
@@ -47,15 +49,19 @@ public class JwtService {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
-        throw new IllegalArgumentException("Invalid Authorization header");
+        throw new InvalidAuthorizationHeaderException();
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSignKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSignKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception ex) {
+            throw new InvalidJwtTokenException();
+        }
     }
 
     private Key getSignKey() {

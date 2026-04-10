@@ -5,8 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.financas.projeto.auth.exception.InvalidAuthorizationHeaderException;
 import com.financas.projeto.auth.exception.InvalidCredentialsException;
+import com.financas.projeto.auth.exception.InvalidJwtTokenException;
 import com.financas.projeto.auth.exception.UserAlreadyExistsException;
+import com.financas.projeto.balance.exception.BalanceStartDateIsAfterException;
 import com.financas.projeto.category.exception.CategoryNotFoundException;
 import com.financas.projeto.common.response.ApiError;
 import com.financas.projeto.transaction.exception.TransactionNotFoundException;
@@ -27,6 +30,24 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ApiError> handleInvalidCredentials(InvalidCredentialsException ex) {
+        ApiError errorResponse = new ApiError(ex.getMessage(), HttpStatus.UNAUTHORIZED.value());
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidAuthorizationHeaderException.class)
+    public ResponseEntity<ApiError> handleInvalidAuthorizationHeader(InvalidAuthorizationHeaderException ex) {
+        ApiError errorResponse = new ApiError(ex.getMessage(), HttpStatus.UNAUTHORIZED.value());
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidJwtTokenException.class)
+    public ResponseEntity<ApiError> handleInvalidJwtToken(InvalidJwtTokenException ex) {
         ApiError errorResponse = new ApiError(ex.getMessage(), HttpStatus.UNAUTHORIZED.value());
 
         return ResponseEntity
@@ -67,6 +88,15 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(BalanceStartDateIsAfterException.class)
+    public ResponseEntity<ApiError> handleBalanceStartDateIsAfter(BalanceStartDateIsAfterException ex) {
+        ApiError errorResponse = new ApiError(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(errorResponse);
     }
 

@@ -9,14 +9,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.financas.projeto.category.entity.Category;
-import com.financas.projeto.category.service.CategoryService;
+import com.financas.projeto.category.exception.CategoryNotFoundException;
+import com.financas.projeto.category.repository.CategoryRepository;
 import com.financas.projeto.transaction.dto.DeleteTransactionRequest;
 import com.financas.projeto.transaction.dto.RegisterTransactionRequest;
+import com.financas.projeto.transaction.dto.TransactionResponse;
+import com.financas.projeto.transaction.dto.TransactionValueByTypeResponse;
 import com.financas.projeto.transaction.dto.UpdateTransactionRequest;
 import com.financas.projeto.transaction.entity.Transaction;
 import com.financas.projeto.transaction.entity.TransactionType;
 import com.financas.projeto.transaction.exception.TransactionNotFoundException;
 import com.financas.projeto.transaction.exception.TransactionUnauthorizedException;
+import com.financas.projeto.transaction.mapper.TransactionMapper;
 import com.financas.projeto.transaction.repository.TransactionRepository;
 import com.financas.projeto.user.entity.User;
 
@@ -24,22 +28,27 @@ import com.financas.projeto.user.entity.User;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
-    private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
+    private final TransactionMapper transactionMapper;
 
-    public TransactionService(TransactionRepository transactionRepository, CategoryService categoryService) {
+    public TransactionService(
+            TransactionRepository transactionRepository,
+            CategoryRepository categoryRepository,
+            TransactionMapper transactionMapper) {
         this.transactionRepository = transactionRepository;
-        this.categoryService = categoryService;
+        this.transactionMapper = transactionMapper;
+        this.categoryRepository = categoryRepository;
     }
 
-    public Page<Transaction> getAllTransactionsByUserId(UUID userId, Pageable pageable) {
+    public Page<TransactionResponse> getAllTransactionsByUserId(UUID userId, Pageable pageable) {
         Page<Transaction> transactions = transactionRepository.findAllByUserId(
                 userId,
                 pageable);
 
-        return transactions;
+        return transactions.map(transactionMapper::toResponse);
     }
 
-    public Page<Transaction> getTransactionsByUserIdAndDateBetween(
+    public Page<TransactionResponse> getTransactionsByUserIdAndDateBetween(
             UUID userId,
             LocalDate startDate,
             LocalDate endDate,
@@ -50,10 +59,10 @@ public class TransactionService {
                 endDate,
                 pageable);
 
-        return transactions;
+        return transactions.map(transactionMapper::toResponse);
     }
 
-    public Page<Transaction> getTransactionsByUserIdAndCategory(
+    public Page<TransactionResponse> getTransactionsByUserIdAndCategory(
             UUID userId,
             UUID categoryId,
             Pageable pageable) {
@@ -62,10 +71,10 @@ public class TransactionService {
                 categoryId,
                 pageable);
 
-        return transactions;
+        return transactions.map(transactionMapper::toResponse);
     }
 
-    public Page<Transaction> getTransactionsByUserIdAndType(
+    public Page<TransactionResponse> getTransactionsByUserIdAndType(
             UUID userId,
             TransactionType type,
             Pageable pageable) {
@@ -74,36 +83,28 @@ public class TransactionService {
                 type,
                 pageable);
 
-        return transactions;
+        return transactions.map(transactionMapper::toResponse);
     }
 
-    public BigDecimal getTotalValueByUserIdAndType(UUID userId, TransactionType type) {
-        return transactionRepository.getTotalValueByUserIdAndType(userId, type);
+    public TransactionValueByTypeResponse getTotalValueByUserIdAndType(UUID userId, TransactionType type) {
+        BigDecimal totalValue = transactionRepository.getTotalValueByUserIdAndType(userId, type);
+        return new TransactionValueByTypeResponse(totalValue);
     }
 
-    public BigDecimal getBalance(UUID userId) {
-        return transactionRepository.getBalance(userId);
-    }
+    public TransactionResponse createTransaction(RegisterTransactionRequest request, User user) {
+        Category category = categoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new CategoryNotFoundException());
 
-    public BigDecimal getBalanceByDateRange(UUID userId, LocalDate startDate, LocalDate endDate) {
-        return transactionRepository.getBalanceByDateRange(userId, startDate, endDate);
-    }
-
-    public Transaction createTransaction(RegisterTransactionRequest request, User user) {
-        Category category = categoryService.findCategoryById(request.categoryId());
-
-        Transaction transaction = new Transaction();
-        transaction.setType(request.type());
-        transaction.setAmount(request.amount());
-        transaction.setDescription(request.description());
-        transaction.setDate(request.date());
+        Transaction transaction = transactionMapper.toEntity(request);
         transaction.setUser(user);
         transaction.setCategory(category);
 
-        return transactionRepository.save(transaction);
+        transactionRepository.save(transaction);
+
+        return transactionMapper.toResponse(transaction);
     }
 
-    public Transaction updateTransaction(UpdateTransactionRequest request, User user) {
+    public TransactionResponse updateTransaction(UpdateTransactionRequest request, User user) {
         Transaction transaction = transactionRepository.findById(request.id())
                 .orElseThrow(() -> new TransactionNotFoundException());
 
@@ -111,7 +112,8 @@ public class TransactionService {
             throw new TransactionUnauthorizedException();
         }
 
-        Category category = categoryService.findCategoryById(request.categoryId());
+        Category category = categoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new CategoryNotFoundException());
 
         transaction.setType(request.type());
         transaction.setAmount(request.amount());
@@ -119,10 +121,12 @@ public class TransactionService {
         transaction.setDate(request.date());
         transaction.setCategory(category);
 
-        return transactionRepository.save(transaction);
+        transactionRepository.save(transaction);
+
+        return transactionMapper.toResponse(transaction);
     }
 
-    public Transaction deleteTransaction(DeleteTransactionRequest request, User user) {
+    public TransactionResponse deleteTransaction(DeleteTransactionRequest request, User user) {
         Transaction transaction = transactionRepository.findById(request.id())
                 .orElseThrow(() -> new TransactionNotFoundException());
 
@@ -131,8 +135,9 @@ public class TransactionService {
         }
 
         transactionRepository.delete(transaction);
+        TransactionResponse response = transactionMapper.toResponse(transaction);
 
-        return transaction;
+        return response;
     }
 
 }
