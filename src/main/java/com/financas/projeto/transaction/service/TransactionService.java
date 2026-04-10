@@ -135,9 +135,7 @@ public class TransactionService {
         }
 
         transactionRepository.delete(transaction);
-        TransactionResponse response = transactionMapper.toResponse(transaction);
-
-        return response;
+        return transactionMapper.toResponse(transaction);
     }
 
 }

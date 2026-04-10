@@ -1,6 +1,5 @@
 package com.financas.projeto.transaction.controller;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.UUID;
@@ -26,7 +25,6 @@ import com.financas.projeto.transaction.dto.RegisterTransactionRequest;
 import com.financas.projeto.transaction.dto.TransactionResponse;
 import com.financas.projeto.transaction.dto.TransactionValueByTypeResponse;
 import com.financas.projeto.transaction.dto.UpdateTransactionRequest;
-import com.financas.projeto.transaction.entity.Transaction;
 import com.financas.projeto.transaction.entity.TransactionType;
 import com.financas.projeto.transaction.service.TransactionService;
 import com.financas.projeto.user.entity.User;

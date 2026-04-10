@@ -37,6 +37,10 @@ public class User {
     public User() {
     }
 
+    public User(UUID id) {
+        this.id = id;
+    }
+
     public UUID getId() {
         return id;
     }
