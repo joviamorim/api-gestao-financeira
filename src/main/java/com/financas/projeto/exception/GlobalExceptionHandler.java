@@ -1,7 +1,12 @@
 package com.financas.projeto.exception;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -15,6 +20,8 @@ import com.financas.projeto.common.response.ApiError;
 import com.financas.projeto.transaction.exception.TransactionNotFoundException;
 import com.financas.projeto.transaction.exception.TransactionUnauthorizedException;
 import com.financas.projeto.user.exception.UserNotFoundException;
+
+import tools.jackson.databind.exc.InvalidFormatException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -100,10 +107,50 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+
+        Throwable cause = ex.getCause();
+
+        if (cause instanceof InvalidFormatException ife) {
+
+            if (ife.getTargetType().equals(UUID.class)) {
+                ApiError errorResponse = new ApiError(
+                        "Invalid UUID format",
+                        HttpStatus.BAD_REQUEST.value());
+
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+        }
+
+        ApiError errorResponse = new ApiError(
+                "Malformed JSON request",
+                HttpStatus.BAD_REQUEST.value());
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiError> handleValidationErrors(MethodArgumentNotValidException ex) {
+        List<String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                .toList();
+
+        ApiError errorResponse = new ApiError(
+                "Validation failed: " + String.join("; ", errors),
+                HttpStatus.BAD_REQUEST.value());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleException(Exception ex) {
         ApiError errorResponse = new ApiError(
-                "Internal server error: ",
+                "Internal server error.",
                 HttpStatus.INTERNAL_SERVER_ERROR.value());
 
         return ResponseEntity
