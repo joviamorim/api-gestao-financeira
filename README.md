@@ -12,8 +12,8 @@ Projeto desenvolvido com foco em boas práticas de backend, incluindo arquitetur
 
 ## 🔗 Links
 
-- 📄 Documentação (Swagger): [<link>](https://api-gestao-financeira.onrender.com/swagger-ui/index.html)
-- 💻 Deploy do app: [<link>](https://gestaofinanceira-one.vercel.app/)
+- 📄 Documentação da API (Swagger): [Clique aqui](https://api-gestao-financeira.onrender.com/swagger-ui/index.html)
+- 💻 Aplicação Web: [Clique aqui](https://gestaofinanceira-one.vercel.app/)
 
 ---
 
