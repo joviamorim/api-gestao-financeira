@@ -111,16 +111,21 @@ http://localhost:8080/swagger-ui/index.html
 
 ## Estrutura do projeto
 
-```
+A aplicação segue uma organização baseada em separação por domínio e responsabilidade:
+
 src/main/java/com/financas/projeto
 │
-├── auth
-├── user
-├── transaction
-├── category
-├── config
-└── security
-```
+├── auth # Autenticação e geração de tokens JWT
+├── user # Gestão de usuários
+├── transaction # Regras de negócio de transações financeiras
+├── category # Gerenciamento de categorias
+├── balance # Cálculo e controle de saldo
+├── security # Configurações de segurança (Spring Security, filtros JWT)
+├── exception # Tratamento global de exceções
+├── config # Configurações gerais da aplicação (Swagger, beans, etc.)
+├── common # Classes utilitárias e componentes compartilhados
+│
+└── ProjetoApplication.java # Classe principal da aplicação
 
 ---
 
