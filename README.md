@@ -109,10 +109,6 @@ http://localhost:8080/swagger-ui/index.html
 
 ---
 
-## Estrutura do projeto
-
-A aplicação segue uma organização baseada em separação por domínio e responsabilidade:
-
 ## 🏗️ Estrutura do projeto
 
 A aplicação segue uma organização baseada em separação por domínio e responsabilidade:
