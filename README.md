@@ -1,40 +1,68 @@
-# API de Gestão Financeira
+![Java](https://img.shields.io/badge/Java-21-blue)
+![Spring](https://img.shields.io/badge/Spring-Boot-green)
+![Status](https://img.shields.io/badge/status-active-success)
 
-API de gestão financeira desenvolvida com **Spring Boot**.
+# 💰 Financial Management API
 
-Permite **registro e login de usuários**, criação de **categorias** e controle de **transações financeiras**.
+API REST para gestão financeira pessoal, permitindo controle de transações, categorias e relatórios.
 
----
-
-## Funcionalidades
-
-* Registro de usuário
-* Login com autenticação **JWT**
-* CRUD de **transações**
-* CRUD de **categorias**
-* Autenticação com **Spring Security**
-* Documentação automática com **Swagger**
+Projeto desenvolvido com foco em boas práticas de backend, incluindo arquitetura em camadas, autenticação JWT, testes automatizados e deploy em nuvem.
 
 ---
 
-## Tecnologias utilizadas
+## 🔗 Links
 
-* Java
-* Spring Boot
-* Spring Security
-* JWT
-* JPA / Hibernate
-* PostgreSQL
-* Docker
-* Maven
+- 📄 Documentação (Swagger): [<link>](https://api-gestao-financeira.onrender.com/swagger-ui/index.html)
+- 💻 Deploy do app: [<link>](https://gestaofinanceira-one.vercel.app/)
 
 ---
 
-## Documentação da API
+## 🔐 Como autenticar
 
-Após iniciar o projeto, a documentação estará disponível em:
+1. Faça login em `/auth/login`
+2. Copie o token retornado
+3. No Swagger, clique em **Authorize**
+4. Insira:
 
-http://localhost:8080/swagger-ui.html
+Bearer {seu_token}
+
+---
+
+## 📌 Funcionalidades
+
+- Cadastro de usuários
+- Autenticação
+- Gestão de transações
+- Filtros por data
+- Relatórios básicos
+
+---
+
+## 🛠️ Tecnologias
+
+- Java 21
+- Spring Boot
+- Spring Security
+- JPA / Hibernate
+- JUnit / Mockito
+- PostgreSQL
+- Docker
+- Maven
+- Swagger
+
+---
+
+## 🔐 Segurança
+
+- Autenticação via JWT
+- Validação de dados com Bean Validation
+- Tratamento global de exceções
+
+---
+
+## 🧪 Testes
+
+- Testes unitários com JUnit e Mockito
 
 ---
 
@@ -73,6 +101,14 @@ http://localhost:8080
 
 ---
 
+## Documentação da API
+
+Após iniciar o projeto, a documentação estará disponível em:
+
+http://localhost:8080/swagger-ui/index.html
+
+---
+
 ## Estrutura do projeto
 
 ```
@@ -88,8 +124,20 @@ src/main/java/com/financas/projeto
 
 ---
 
-## Melhorias futuras
+## 🧠 Decisões técnicas
 
-* Filtros por data e categoria
-* Deploy em cloud
-* Testes automatizados
+- Utilizei Spring Boot pela produtividade e ecossistema robusto
+- Arquitetura em camadas para separação clara de responsabilidades
+- JWT para autenticação stateless, facilitando escalabilidade
+- Uso de DTOs para desacoplamento entre camada de domínio e API
+
+---
+
+## 🚀 Melhorias futuras
+
+- Implementação de refresh token
+- Controle de acesso por roles (RBAC)
+- Testes de integração com Testcontainers
+- Cache com Redis
+- Rate limiting
+- Dashboard analítico
