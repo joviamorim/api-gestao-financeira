@@ -21,6 +21,10 @@ public class Category {
     public Category() {
     }
 
+    public Category(UUID id) {
+        this.id = id;
+    }
+
     public UUID getId() {
         return id;
     }
