@@ -19,6 +19,7 @@ import com.financas.projeto.transaction.dto.UpdateTransactionRequest;
 import com.financas.projeto.transaction.entity.Transaction;
 import com.financas.projeto.transaction.entity.TransactionType;
 import com.financas.projeto.transaction.exception.TransactionNotFoundException;
+import com.financas.projeto.transaction.exception.TransactionStartDateIsAfterException;
 import com.financas.projeto.transaction.exception.TransactionUnauthorizedException;
 import com.financas.projeto.transaction.mapper.TransactionMapper;
 import com.financas.projeto.transaction.repository.TransactionRepository;
@@ -53,6 +54,10 @@ public class TransactionService {
             LocalDate startDate,
             LocalDate endDate,
             Pageable pageable) {
+        if (startDate.isAfter(endDate)) {
+            throw new TransactionStartDateIsAfterException();
+        }
+
         Page<Transaction> transactions = transactionRepository.findByUserIdAndDateBetween(
                 userId,
                 startDate,
@@ -66,6 +71,10 @@ public class TransactionService {
             UUID userId,
             UUID categoryId,
             Pageable pageable) {
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new CategoryNotFoundException();
+        }
+
         Page<Transaction> transactions = transactionRepository.findByUserIdAndCategoryId(
                 userId,
                 categoryId,
@@ -105,7 +114,7 @@ public class TransactionService {
     }
 
     public TransactionResponse updateTransaction(UpdateTransactionRequest request, User user) {
-        Transaction transaction = transactionRepository.findById(request.id())
+        Transaction transaction = transactionRepository.findByIdWithCategory(request.id())
                 .orElseThrow(() -> new TransactionNotFoundException());
 
         if (!transaction.getUser().getId().equals(user.getId())) {
@@ -127,7 +136,7 @@ public class TransactionService {
     }
 
     public TransactionResponse deleteTransaction(DeleteTransactionRequest request, User user) {
-        Transaction transaction = transactionRepository.findById(request.id())
+        Transaction transaction = transactionRepository.findByIdWithCategory(request.id())
                 .orElseThrow(() -> new TransactionNotFoundException());
 
         if (!transaction.getUser().getId().equals(user.getId())) {

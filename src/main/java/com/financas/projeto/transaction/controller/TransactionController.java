@@ -71,7 +71,8 @@ public class TransactionController {
         @GetMapping("/filter-by-date-range")
         public ResponseEntity<ApiResponse<Page<TransactionResponse>>> getTransactionsByUserIdAndDateBetween(
                         @AuthenticationPrincipal User user,
-                        @RequestParam LocalDate startDate,
+                        @RequestParam LocalDate startDate, // adicionar validação para garantir que startDate seja
+                                                           // anterior a endDate
                         @RequestParam LocalDate endDate,
                         @ParameterObject @PageableDefault(size = 10, sort = "date", direction = Sort.Direction.DESC) Pageable pageable) {
                 Page<TransactionResponse> transactions = transactionService.getTransactionsByUserIdAndDateBetween(

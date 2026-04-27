@@ -1,4 +1,4 @@
-package com.financas.projeto.auth.service;
+package com.financas.projeto.unit.auth.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,6 +25,8 @@ import com.financas.projeto.auth.dto.LoginRequest;
 import com.financas.projeto.auth.dto.RegisterRequest;
 import com.financas.projeto.auth.exception.InvalidCredentialsException;
 import com.financas.projeto.auth.exception.UserAlreadyExistsException;
+import com.financas.projeto.auth.service.AuthService;
+import com.financas.projeto.auth.service.JwtService;
 import com.financas.projeto.user.entity.User;
 import com.financas.projeto.user.repository.UserRepository;
 

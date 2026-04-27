@@ -1,4 +1,4 @@
-package com.financas.projeto.transaction.service;
+package com.financas.projeto.unit.transaction.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -41,6 +41,7 @@ import com.financas.projeto.transaction.exception.TransactionNotFoundException;
 import com.financas.projeto.transaction.exception.TransactionUnauthorizedException;
 import com.financas.projeto.transaction.mapper.TransactionMapper;
 import com.financas.projeto.transaction.repository.TransactionRepository;
+import com.financas.projeto.transaction.service.TransactionService;
 import com.financas.projeto.user.entity.User;
 
 @ExtendWith(MockitoExtension.class)
@@ -160,7 +161,7 @@ class TransactionServiceTest {
                                 date,
                                 "Alimentação");
 
-                when(transactionRepository.findById(transactionId))
+                when(transactionRepository.findByIdWithCategory(transactionId))
                                 .thenReturn(Optional.of(transaction));
 
                 when(categoryRepository.findById(categoryId))
@@ -187,7 +188,7 @@ class TransactionServiceTest {
                 assertEquals(TransactionType.EXPENSE, result.type());
                 assertEquals("Alimentação", result.categoryName());
 
-                verify(transactionRepository).findById(transactionId);
+                verify(transactionRepository).findByIdWithCategory(transactionId);
                 verify(categoryRepository).findById(categoryId);
         }
 
@@ -204,7 +205,7 @@ class TransactionServiceTest {
 
                 User user = new User(userId);
 
-                when(transactionRepository.findById(transactionId))
+                when(transactionRepository.findByIdWithCategory(transactionId))
                                 .thenReturn(Optional.empty());
 
                 // Act & Assert
@@ -213,7 +214,7 @@ class TransactionServiceTest {
                                         transactionService.updateTransaction(request, user);
                                 });
 
-                verify(transactionRepository).findById(transactionId);
+                verify(transactionRepository).findByIdWithCategory(transactionId);
                 verify(transactionRepository, never()).save(any());
         }
 
@@ -235,7 +236,7 @@ class TransactionServiceTest {
                 Transaction transaction = new Transaction();
                 transaction.setUser(transactionUser);
 
-                when(transactionRepository.findById(transactionId))
+                when(transactionRepository.findByIdWithCategory(transactionId))
                                 .thenReturn(Optional.of(transaction));
 
                 // Act & Assert
@@ -244,7 +245,7 @@ class TransactionServiceTest {
                                         transactionService.updateTransaction(request, user);
                                 });
 
-                verify(transactionRepository).findById(transactionId);
+                verify(transactionRepository).findByIdWithCategory(transactionId);
                 verify(transactionRepository, never()).save(any());
                 verify(categoryRepository, never()).findById(any(UUID.class));
         }
@@ -267,7 +268,7 @@ class TransactionServiceTest {
                 Transaction transaction = new Transaction();
                 transaction.setUser(transactionUser);
 
-                when(transactionRepository.findById(transactionUuid))
+                when(transactionRepository.findByIdWithCategory(transactionUuid))
                                 .thenReturn(Optional.of(transaction));
 
                 when(categoryRepository.findById(categoryId))
@@ -279,7 +280,7 @@ class TransactionServiceTest {
                                         transactionService.updateTransaction(request, user);
                                 });
 
-                verify(transactionRepository).findById(transactionUuid);
+                verify(transactionRepository).findByIdWithCategory(transactionUuid);
                 verify(categoryRepository).findById(categoryId);
                 verify(transactionRepository, never()).save(any());
         }
@@ -306,7 +307,7 @@ class TransactionServiceTest {
                                 LocalDate.of(2026, 3, 15),
                                 "Alimentação");
 
-                when(transactionRepository.findById(transactionId))
+                when(transactionRepository.findByIdWithCategory(transactionId))
                                 .thenReturn(Optional.of(transaction));
 
                 when(transactionMapper.toResponse(transaction))
@@ -324,7 +325,7 @@ class TransactionServiceTest {
                 assertEquals(LocalDate.of(2026, 3, 15), result.date());
                 assertEquals("Alimentação", result.categoryName());
 
-                verify(transactionRepository).findById(transactionId);
+                verify(transactionRepository).findByIdWithCategory(transactionId);
                 verify(transactionRepository).delete(transaction);
         }
 
@@ -338,7 +339,7 @@ class TransactionServiceTest {
 
                 User user = new User(userId);
 
-                when(transactionRepository.findById(transactionId))
+                when(transactionRepository.findByIdWithCategory(transactionId))
                                 .thenReturn(Optional.empty());
 
                 // Act & Assert
@@ -347,7 +348,7 @@ class TransactionServiceTest {
                                         transactionService.deleteTransaction(request, user);
                                 });
 
-                verify(transactionRepository).findById(transactionId);
+                verify(transactionRepository).findByIdWithCategory(transactionId);
                 verify(transactionRepository, never()).delete(any());
         }
 
@@ -366,7 +367,7 @@ class TransactionServiceTest {
                 Transaction transaction = new Transaction();
                 transaction.setUser(transactionUser);
 
-                when(transactionRepository.findById(transactionId))
+                when(transactionRepository.findByIdWithCategory(transactionId))
                                 .thenReturn(Optional.of(transaction));
 
                 // Act & Assert
@@ -375,7 +376,7 @@ class TransactionServiceTest {
                                         transactionService.deleteTransaction(request, user);
                                 });
 
-                verify(transactionRepository).findById(transactionId);
+                verify(transactionRepository).findByIdWithCategory(transactionId);
                 verify(transactionRepository, never()).delete(any());
 
         }
@@ -601,6 +602,9 @@ class TransactionServiceTest {
                                 LocalDate.now(),
                                 "food");
 
+                when(categoryRepository.existsById(categoryId))
+                                .thenReturn(true);
+
                 when(transactionRepository.findByUserIdAndCategoryId(userId, categoryId, pageable))
                                 .thenReturn(transactions);
 
@@ -616,6 +620,29 @@ class TransactionServiceTest {
                 assertEquals(transactionResponse, result.getContent().get(0));
                 verify(transactionRepository).findByUserIdAndCategoryId(userId, categoryId, pageable);
                 verify(transactionMapper).toResponse(transaction);
+        }
+
+        @Test
+        void shouldThrowWhenCategoryNotFoundOnGetTransactionsByUserIdAndCategory() {
+                // Arrange
+                UUID userId = UUID.randomUUID();
+                UUID categoryId = UUID.randomUUID();
+                Pageable pageable = Pageable.unpaged();
+
+                when(categoryRepository.existsById(categoryId))
+                                .thenReturn(false);
+
+                // Act & Assert
+                assertThrows(CategoryNotFoundException.class,
+                                () -> {
+                                        transactionService.getTransactionsByUserIdAndCategory(userId, categoryId,
+                                                        pageable);
+                                });
+
+                verify(categoryRepository).existsById(categoryId);
+                verify(transactionRepository, never()).findByUserIdAndCategoryId(any(UUID.class), any(UUID.class),
+                                any(Pageable.class));
+                verify(transactionMapper, never()).toResponse(any(Transaction.class));
         }
 
         @Test

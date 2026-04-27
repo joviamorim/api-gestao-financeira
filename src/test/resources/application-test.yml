@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  sql:
+    init:
+      mode: never
+
+  liquibase:
+    enabled: false
+
+logging:
+  level:
+    root: WARN
+    org.springframework: WARN
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE
+    org.testcontainers: WARN
+
+server:
+  port: 0
+
+jwt:
+  secret: test-secret-key
+  expiration: 3600000
+
+app:
+  cors:
+    allowed-origins: "*"

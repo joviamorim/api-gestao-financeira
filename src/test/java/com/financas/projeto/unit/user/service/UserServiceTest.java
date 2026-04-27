@@ -1,4 +1,4 @@
-package com.financas.projeto.user.service;
+package com.financas.projeto.unit.user.service;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.financas.projeto.user.entity.User;
 import com.financas.projeto.user.exception.UserNotFoundException;
 import com.financas.projeto.user.repository.UserRepository;
+import com.financas.projeto.user.service.UserService;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {

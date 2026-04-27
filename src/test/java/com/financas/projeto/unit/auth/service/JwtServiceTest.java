@@ -1,4 +1,4 @@
-package com.financas.projeto.auth.service;
+package com.financas.projeto.unit.auth.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -10,6 +10,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.financas.projeto.auth.exception.InvalidAuthorizationHeaderException;
 import com.financas.projeto.auth.exception.InvalidJwtTokenException;
+import com.financas.projeto.auth.service.JwtService;
 import com.financas.projeto.user.entity.User;
 
 public class JwtServiceTest {

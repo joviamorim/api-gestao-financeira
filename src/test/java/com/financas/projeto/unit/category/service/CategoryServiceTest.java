@@ -1,4 +1,4 @@
-package com.financas.projeto.category.service;
+package com.financas.projeto.unit.category.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,6 +25,7 @@ import com.financas.projeto.category.entity.Category;
 import com.financas.projeto.category.exception.CategoryNotFoundException;
 import com.financas.projeto.category.mapper.CategoryMapper;
 import com.financas.projeto.category.repository.CategoryRepository;
+import com.financas.projeto.category.service.CategoryService;
 
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceTest {
