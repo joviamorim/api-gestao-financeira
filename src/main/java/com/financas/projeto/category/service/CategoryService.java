@@ -22,8 +22,9 @@ public class CategoryService {
         this.categoryMapper = categoryMapper;
     }
 
-    public CategoryListResponse getAllCategories() {
-        List<Category> categories = categoryRepository.findAll();
+    public CategoryListResponse getAllCategories(UUID userId) {
+        List<Category> categories = categoryRepository.findAllByUserId(userId)
+                .orElseThrow(() -> new CategoryNotFoundException());
 
         return categoryMapper.toListResponse(categories);
     }
