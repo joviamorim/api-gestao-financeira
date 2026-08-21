@@ -70,4 +70,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
         BigDecimal getTotalValueByUserIdAndType(
                         UUID userId,
                         TransactionType type);
+
+        boolean existsByUserIdAndCategoryId(
+                        UUID userId,
+                        UUID categoryId);
 }

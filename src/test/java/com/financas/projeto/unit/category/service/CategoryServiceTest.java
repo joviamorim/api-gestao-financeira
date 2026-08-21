@@ -26,6 +26,7 @@ import com.financas.projeto.category.exception.CategoryNotFoundException;
 import com.financas.projeto.category.mapper.CategoryMapper;
 import com.financas.projeto.category.repository.CategoryRepository;
 import com.financas.projeto.category.service.CategoryService;
+import com.financas.projeto.user.entity.User;
 
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceTest {
@@ -53,6 +54,8 @@ public class CategoryServiceTest {
                 CategoryListResponse categoryListResponse = new CategoryListResponse(
                                 List.of(new CategoryResponse(categoryId, categoryName)));
 
+                User user = new User();
+
                 when(categoryRepository.findAll())
                                 .thenReturn(categories);
 
@@ -61,7 +64,7 @@ public class CategoryServiceTest {
 
                 // Act
 
-                CategoryListResponse response = categoryService.getAllCategories();
+                CategoryListResponse response = categoryService.getAllCategories(user.getId());
 
                 // Assert
                 assertNotNull(response);
@@ -80,6 +83,8 @@ public class CategoryServiceTest {
 
                 CategoryListResponse categoryListResponse = new CategoryListResponse(List.of());
 
+                User user = new User();
+
                 when(categoryRepository.findAll())
                                 .thenReturn(categories);
 
@@ -87,7 +92,7 @@ public class CategoryServiceTest {
                                 .thenReturn(categoryListResponse);
 
                 // Act
-                CategoryListResponse response = categoryService.getAllCategories();
+                CategoryListResponse response = categoryService.getAllCategories(user.getId());
 
                 // Assert
                 assertNotNull(response);

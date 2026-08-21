@@ -15,7 +15,10 @@ import com.financas.projeto.auth.exception.InvalidCredentialsException;
 import com.financas.projeto.auth.exception.InvalidJwtTokenException;
 import com.financas.projeto.auth.exception.UserAlreadyExistsException;
 import com.financas.projeto.balance.exception.BalanceStartDateIsAfterException;
+import com.financas.projeto.category.exception.CategoryAlreadyExistsException;
+import com.financas.projeto.category.exception.CategoryInUseException;
 import com.financas.projeto.category.exception.CategoryNotFoundException;
+import com.financas.projeto.category.exception.CategoryUnauthorizedException;
 import com.financas.projeto.common.response.ApiError;
 import com.financas.projeto.transaction.exception.TransactionNotFoundException;
 import com.financas.projeto.transaction.exception.TransactionStartDateIsAfterException;
@@ -105,6 +108,33 @@ public class GlobalExceptionHandler {
 
                 return ResponseEntity
                                 .status(HttpStatus.NOT_FOUND)
+                                .body(errorResponse);
+        }
+
+        @ExceptionHandler(CategoryAlreadyExistsException.class)
+        public ResponseEntity<ApiError> handleCategoryAlreadyExists(CategoryAlreadyExistsException ex) {
+                ApiError errorResponse = new ApiError(ex.getMessage(), HttpStatus.CONFLICT.value());
+
+                return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
+                                .body(errorResponse);
+        }
+
+        @ExceptionHandler(CategoryUnauthorizedException.class)
+        public ResponseEntity<ApiError> handleCategoryUnauthorized(CategoryUnauthorizedException ex) {
+                ApiError errorResponse = new ApiError(ex.getMessage(), HttpStatus.FORBIDDEN.value());
+
+                return ResponseEntity
+                                .status(HttpStatus.FORBIDDEN)
+                                .body(errorResponse);
+        }
+
+        @ExceptionHandler(CategoryInUseException.class)
+        public ResponseEntity<ApiError> handleCategoryInUse(CategoryInUseException ex) {
+                ApiError errorResponse = new ApiError(ex.getMessage(), HttpStatus.CONFLICT.value());
+
+                return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
                                 .body(errorResponse);
         }
 
