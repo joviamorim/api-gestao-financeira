@@ -1,9 +1,9 @@
-package com.financas.projeto.transaction.dto;
+package com.financas.projeto.category.dto;
 
 import java.util.UUID;
 
 import jakarta.validation.constraints.NotNull;
 
-public record DeleteTransactionRequest(
+public record DeleteCategoryRequest(
                 @NotNull UUID id) {
 }
